@@ -51,9 +51,10 @@ vim.opt.laststatus = 2
 vim.opt.showmode = false
 vim.opt.shortmess:append("sIc")
 
-vim.opt.syntax = "OFF"  -- ВСЕ ЗАГЛАВНЫЕ (иногда важно)
-vim.opt_global.syntax = "OFF"
-vim.cmd("syntax off")   -- Дублируем командой на всякий случай
+-- включил подсведку для сервера vpn
+-- vim.opt.syntax = "OFF"  -- ВСЕ ЗАГЛАВНЫЕ (иногда важно)
+-- vim.opt_global.syntax = "OFF"
+-- vim.cmd("syntax off")   -- Дублируем командой на всякий случай
 
 
 -- тестирование функции alpha
