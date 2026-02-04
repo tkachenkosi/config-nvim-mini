@@ -17,11 +17,12 @@ vim.cmd([[autocmd BufEnter * set fo-=c fo-=r fo-=o]])
 
 
 vim.api.nvim_create_autocmd('TextYankPost', {
-  desc = 'Highlight when yanking (copying) text',
+	pattern = "*",
+  desc = 'Highlight when yanking (copy) text',
   group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
   callback = function()
     vim.highlight.on_yank({
-      timeout = 55,
+      timeout = 50,
 		})
   end,
 })
@@ -97,5 +98,38 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 
 
+-- keymap("n", "<Leader>ex", "<cmd>Ex %:p:h<CR>") -- Open Netrw in the current file's directory
+-- улучшенное создание файла во встроенном fikes manager
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "netrw",
+	callback = function()
+		-- local bs = { buffer = true, silent = true }
+		-- local brs = { buffer = true, remap = true, silent = true }
+		-- vim.keymap.set("n", "q", "<cmd>bd<CR>", bs) -- Close the current Netrw buffer
+		-- vim.keymap.set("n", "<Tab>", "mf", brs)		-- Mark the file/directory to the mark lis
+		-- vim.keymap.set("n", "<S-Tab>", "mF", brs) -- Unmark all the files/directories
 
+		-- vim.keymap.set("n", "q", function()
+		-- 	local bufnr = vim.api.nvim_get_current_buf()
+		-- 	vim.api.nvim_win_close(0, false)
+		-- 	vim.defer_fn(function()
+		-- 		if vim.api.nvim_buf_is_valid(bufnr) then
+		-- 			vim.api.nvim_buf_delete(bufnr, { force = true })
+		-- 		end
+		-- 	end, 50)
+		-- end, bs)
+
+		-- Improved file creation
+		vim.keymap.set("n", "%", function()
+			local dir = vim.b.netrw_curdir or vim.fn.expand("%:p:h")
+			vim.ui.input({ prompt = "Enter filename: " }, function(input)
+				if input and input ~= "" then
+					local filepath = dir .. "/" .. input
+					vim.cmd("!touch " .. vim.fn.shellescape(filepath))
+					vim.api.nvim_feedkeys("<C-l>", "n", false) -- обновление списка файлов
+				end
+			end)
+		end, { buffer = true, silent = true })
+	end,
+})
 

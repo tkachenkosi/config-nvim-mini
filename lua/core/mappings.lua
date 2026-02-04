@@ -1,16 +1,13 @@
-local keymap = vim.keymap -- for conciseness
+local opts = { noremap = true, silent = true }
 
 -- Buffers
-vim.api.nvim_set_keymap("n", "<leader>q", "<cmd>qa<CR>", {})
--- vim.keymap.set("n", "<leader>s", function() require('msession').mks_session(); end)		-- сохранить сессию
+vim.keymap.set("n", "<leader>q", "<cmd>qa<CR>", opts)
 vim.keymap.set("n", "<leader>s", function() vim.cmd("mks! .session"); print("Save Ok. "..vim.fn.getcwd()); end)		-- сохранить сессию
--- vim.api.nvim_set_keymap("n", "<leader>r", "<CMD>so .session<CR>", {})		-- открыть сессию
-vim.api.nvim_set_keymap('n', '<F2>', '<cmd>w<CR>', {})
-vim.api.nvim_set_keymap('i', '<F2>', '<Esc><cmd>w<CR>', {})
+vim.keymap.set('n', '<F2>', '<cmd>w<CR>', opts)
+vim.keymap.set('i', '<F2>', '<Esc><cmd>w<CR>', opts)
 -- vim.keymap.set("i", "jj", "<Esc>")
 
 -- закоментировать строку/ Коментарий блока - <leader>gc
--- vim.keymap.set('n', '<F3>', "gcc", {})
 vim.api.nvim_set_keymap('n', '<F3>', "gccj", {})
 vim.api.nvim_set_keymap('i', '<F3>', "<Esc>gcca", {})
 
@@ -19,105 +16,93 @@ vim.api.nvim_set_keymap('n', '<F5>', 'viwy', {})
 -- vim.keymap.set('i', '<F5>', '<Esc>viwy', {})
 
 -- копирует и всавляем из системного буфера (пока только вставляет, эта поперация нужна чаще)
-vim.api.nvim_set_keymap('n', '<F6>', '"+p', {})
-vim.api.nvim_set_keymap('i', '<F6>', '<Esc>"+pa', {})
-vim.api.nvim_set_keymap('v', '<F6>', '"+y', {})     -- копирует выделенный фрагмент в системный буфер в режиме выделения
+vim.api.nvim_set_keymap('n', '<F6>', '"+p', opts)
+vim.api.nvim_set_keymap('i', '<F6>', '<Esc>"+pa', opts)
+vim.api.nvim_set_keymap('v', '<F6>', '"+y', opts)     -- копирует выделенный фрагмент в системный буфер в режиме выделения
 
 -- выделяет и тутже заменяет слово
 vim.api.nvim_set_keymap('n', '<F8>', 'viw"0p', {})
 vim.api.nvim_set_keymap('i', '<F8>', '<Esc>viwp', {})
 
 -- быстрый поиск (выделение) текста. Так же есть команада * - движение по n вперед, # - назад
-vim.keymap.set('n', '<F7>', '*', {})
-vim.keymap.set('i', '<F7>', '<Esc>*', {})
+vim.keymap.set('n', '<F7>', '*', opts)
+vim.keymap.set('i', '<F7>', '<Esc>*', opts)
 
 -- сдублировать строку
-vim.api.nvim_set_keymap('n', [[<c-l>]], [[yyp]], {})
-vim.api.nvim_set_keymap('i', [[<c-l>]], [[<Esc>yypa]], {})
+vim.keymap.set('n', '<C-l>', 'yyp', opts)
+vim.keymap.set('i', '<C-l>', '<Esc>yypa', opts)
 
 -- сдублировать и закоментировать первую строку
-vim.api.nvim_set_keymap('n', [[<a-l>]], [[yypkgccj]], {})
-vim.api.nvim_set_keymap('i', [[<a-l>]], [[<Esc>yypkgccja]], {})
+vim.api.nvim_set_keymap('n', '<A-l>', 'yypkgccj', {})
+vim.api.nvim_set_keymap('i', '<A-l>', '<Esc>yypkgccja', {})
 
-vim.api.nvim_set_keymap('n', '<a-y>', [["tyy]], {})          -- скопировать всю строку в регистр "t (temp)
-vim.api.nvim_set_keymap('v', '<a-y>', [["ty]], {})           -- скопировать выделенный блок в регистр "t
-vim.api.nvim_set_keymap('i', '<a-y>', [[<Esc>"tyya]], {})    -- скопировать всю строку в режиме редактирования
+-- Yank в регистр t
+vim.keymap.set('n', '<A-y>', [["tyy]], opts)
+vim.keymap.set('v', '<A-y>', [["ty]], opts)
+vim.keymap.set('i', '<A-y>', [[<Esc>"tyya]], opts)
 
--- дополнительное кнопка для вставки из буфера не зависищая от режима и перехода в режим редактирования курсор в начало
-vim.api.nvim_set_keymap('n', '<a-p>', [["tpa]], {})          -- вставляют из регистра "t
-vim.api.nvim_set_keymap('v', '<a-p>', [["tp]], {})           -- вставляют из регистра "t
-vim.api.nvim_set_keymap('i', '<a-p>', [[<Esc>"tpa]], {})
+-- Paste из регистра t
+vim.keymap.set('n', '<A-p>', [["tpa]], opts)
+vim.keymap.set('v', '<A-p>', [["tp]], opts)
+vim.keymap.set('i', '<A-p>', [[<Esc>"tpa]], opts)
 
 -- Windows
 -- vim.keymap.set("n", "<c-k>", ":wincmd k<CR>")
 -- vim.keymap.set("n", "<c-j>", ":wincmd j<CR>")
 -- vim.keymap.set("n", "<c-h>", ":wincmd h<CR>")
 -- vim.keymap.set("n", "<c-l>", ":wincmd l<CR>")
--- переходит в левое окно (Exploer) и его закрывает.
--- vim.keymap.set("n", "<a-h>", ":wincmd h<CR>:wincmd q<CR>")
-vim.api.nvim_set_keymap("n", "<leader>x", "<cmd>wincmd h<CR><cmd>wincmd q<CR>", {})
 
 -- vim.api.nvim_set_keymap('n', '<c-s>', '<cmd>set relativenumber!<CR>', {})
-vim.api.nvim_set_keymap('n', '<leader>/', '<cmd>noh<CR>', {})
+vim.keymap.set('n', '<leader>/', '<cmd>noh<CR>', opts)
 
 -- открыть окно со списоком буферов
--- vim.keymap.set('n', '<F12>', '<CMD>StartMbuffers<CR>')
--- vim.keymap.set('i', '<F12>', '<Esc><CMD>StartMbuffers<CR>')
-vim.keymap.set({'n', 'i'}, '<F12>', function() require('mbuffers').start(); end)
--- отключим временно
--- vim.keymap.set('n', '<leader><F12>', function() require('msession').start(); end)
+vim.keymap.set({'n', 'i'}, '<F12>', function() require('mbuffers').start(); end, opts)
 
 -- переключиться на предыдущий буфер
-vim.api.nvim_set_keymap('n', '<F10>', '<c-6>', {})
-vim.api.nvim_set_keymap('i', '<F10>', '<Esc><c-6>', {})
+vim.keymap.set('n', '<F10>', '<c-6>', opts)
+vim.keymap.set('i', '<F10>', '<Esc><c-6>', opts)
 -- выдиляет весь текст
-vim.api.nvim_set_keymap('n', '<Leader>sa', 'ggVG<c-$>', {})
+vim.keymap.set('n', '<Leader>sa', 'ggVG<c-$>', opts)
 -- дополнительная команда входа в командный режим
-vim.api.nvim_set_keymap("n", ";", ":", {desc = "CMD enter comand mode"})
+vim.keymap.set("n", ";", ":", {noremap = true, silent = false})
 
 -- встроенный Exploer (открываем слева окно в 30 колонок)
+-- уже не нужно так как есть <leader>e
 -- keymap('n', '<leader><F3>', '<Esc>:Explore<CR>', {})
-vim.api.nvim_set_keymap("n", "<leader><F3>", "<cmd>30vs +Exp<CR>", {})
-
--- vim.keymap.set("n", "//", ":vsplit<CR>")
--- vim.keymap.set("n", "||", ":split<CR>")
 
 -- Tab
-vim.api.nvim_set_keymap("n", "<Tab>", "<c-6>", {})
-vim.api.nvim_set_keymap('n', '<S-Tab>', '<cmd>bprevious<CR>', {})
+vim.keymap.set("n", "<Tab>", "<c-6>", opts)
+vim.keymap.set('n', '<S-Tab>', '<cmd>bprevious<CR>', opts)
 
 -- цветовые темы оформления
--- vim.keymap.set('n', '<leader>2', [[<cmd>colorscheme onedark<CR>]])
--- vim.keymap.set('n', '<leader>3', [[<cmd>colorscheme gruvboxsi<CR>]])
--- keymap.set('n', '<leader>2', function() require('onedark').load(); end, {})
--- keymap.set('n', '<leader>3', function() require('gruvboxsi').load(); end, {})
-vim.keymap.set('n', '<leader>2', function() vim.cmd.colorscheme('onedark'); end)
-vim.keymap.set('n', '<leader>3', function() vim.cmd.colorscheme('gruvboxsi'); end)
+vim.keymap.set('n', '<leader>2', function() vim.cmd.colorscheme('onedark'); end, opts)
+vim.keymap.set('n', '<leader>3', function() vim.cmd.colorscheme('gruvboxsi'); end, opts)
 
 -- отмена в привычном сочетании
-vim.api.nvim_set_keymap('n', '<c-z>', "<cmd>undo<CR>", {})
-vim.api.nvim_set_keymap('i', '<c-z>', "<Esc><cmd>undo<CR>", {})
+vim.keymap.set('n', '<C-z>', "<cmd>undo<CR>", opts)
+vim.keymap.set('i', '<C-z>', "<Esc><cmd>undo<CR>", opts)
 -- заблокируем стандартную отмену, что бы не путаться
 -- keymap('n', 'u', "<Nop>", {})
 -- навесим на u снятие выделения
-vim.api.nvim_set_keymap('n', 'u', '<cmd>noh<CR>', {})
+vim.keymap.set('n', 'u', '<cmd>noh<CR>', opts)
 
-keymap.set('n', '<leader>й', "<cmd>qa<CR>")
-keymap.set('n', 'щ', 'o')
-keymap.set('n', 'ш', 'i')
-keymap.set('n', 'ф', 'a')
-keymap.set('n', 'Ж', ':')
-keymap.set('n', 'М', 'V')
-keymap.set('n', 'м', 'v')
-keymap.set('n', 'г', 'u')
-keymap.set('n', 'н', 'y')
-keymap.set('v', 'н', 'y')
-keymap.set('o', 'н', 'y')
-keymap.set('n', 'з', 'p')
-keymap.set('v', 'з', 'p')
-keymap.set('n', 'в', 'd')
-keymap.set('v', 'в', 'd')
-keymap.set('o', 'в', 'd')
+vim.keymap.set('n', '<leader>й', "<cmd>qa<CR>", opts)
+vim.keymap.set('n', 'щ', 'o', opts)
+vim.keymap.set('n', 'ш', 'i', opts)
+vim.keymap.set('n', 'ф', 'a', opts)
+vim.keymap.set('n', 'Ж', ':', opts)
+vim.keymap.set('n', 'М', 'V', opts)
+vim.keymap.set('n', 'м', 'v', opts)
+vim.keymap.set('n', 'г', 'u', opts)
+vim.keymap.set('n', 'н', 'y', opts)
+vim.keymap.set('v', 'н', 'y', opts)
+vim.keymap.set('o', 'н', 'y', opts)
+vim.keymap.set('n', 'з', 'p', opts)
+vim.keymap.set('v', 'з', 'p', opts)
+vim.keymap.set('n', 'в', 'd', opts)
+vim.keymap.set('v', 'в', 'd', opts)
+vim.keymap.set('o', 'в', 'd', opts)
 
 -- отключить запись макросов
-vim.keymap.set('n', 'q', '<Nop>', { noremap = true, silent = true })
+vim.keymap.set('n', 'q', '<Nop>', opts)
+

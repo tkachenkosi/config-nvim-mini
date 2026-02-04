@@ -81,7 +81,7 @@ end
 -- Использование: вводим только тег dev, a, strong, ... нажимаем a-` получаем законченный тег
 -- vim.api.nvim_create_user_command("JsonLine", gen_json_current_line, {})
 -- vim.api.nvim_set_keymap('n', '<a-2>', "<CMD>JsonLine<CR>")
-vim.keymap.set({'n','i'}, '<a-1>', function() gen_json_current_line() end)
+vim.keymap.set({'n','i'}, '<a-1>', gen_json_current_line)
 
 
 -- автодополнение HTML тэгов
@@ -141,7 +141,7 @@ local function gen_snip_current_line()
 	vim.api.nvim_win_set_cursor(0, { row, col_cur })
 end
 
-vim.keymap.set({'n','i'}, "<a-`>", function() gen_snip_current_line() end)
+vim.keymap.set({'n','i'}, "<a-`>", gen_snip_current_line)
 
 -- получение цвета фона текущец строки
 local function put_color()
@@ -152,44 +152,77 @@ local function put_color()
 	end
 end
 
-vim.keymap.set({'n','i'}, '<a-5>', function() put_color() end)
+vim.keymap.set({'n','i'}, '<a-5>', put_color)
 
 
 -- читает слово под курсором, определяет расширение файла 
 -- запускает Rg <ext_file> <current_word>
 local function QuickfixCurrWord()
-		local current_mode = vim.api.nvim_get_mode().mode
-    local current_word = ""
+	local current_mode = vim.api.nvim_get_mode().mode
+	local current_word = ""
 
-		-- в зависимости от режима
-		if current_mode == 'n' then
-			-- слово под курсором
-			current_word = vim.fn.expand('<cword>')
-		elseif current_mode == 'v' then
-			-- Visual mode (V - linewise, v - charwise, Ctrl-V - blockwise)
-			-- Сохраняем выделение в регистр "
-			vim.cmd('noautocmd normal! "xy')
-			-- Получаем выделенный текст из регистра x
-			-- Убираем последний символ если это перевод строки (в визуальном режиме часто добавляется)
-			current_word = vim.fn.getreg('x'):gsub('\n$', '')
-		end
+	-- в зависимости от режима
+	if current_mode == 'n' then
+		-- слово под курсором
+		current_word = vim.fn.expand('<cword>')
+	elseif current_mode == 'v' then
+		-- Visual mode (V - linewise, v - charwise, Ctrl-V - blockwise)
+		-- Сохраняем выделение в регистр "
+		vim.cmd('noautocmd normal! "xy')
+		-- Получаем выделенный текст из регистра x
+		-- Убираем последний символ если это перевод строки (в визуальном режиме часто добавляется)
+		current_word = vim.fn.getreg('x'):gsub('\n$', '')
+	end
 
-    -- расширение файла
-    local filename = vim.fn.expand('%:t') -- имя файла с расширением
-    local ext_file = vim.fn.fnamemodify(filename, ':e') -- только расширение
+	-- расширение файла
+	local filename = vim.fn.expand('%:t') -- имя файла с расширением
+	local ext_file = vim.fn.fnamemodify(filename, ':e') -- только расширение
 
-    -- Если файл без расширения
-    if ext_file == '' or current_word == '' then
-			vim.print(string.format("Error: current_word: '%s', ext_file: '%s'", current_word, ext_file))
-			return
-    end
+	-- Если файл без расширения
+	if ext_file == '' or current_word == '' then
+		vim.print(string.format("Error: current_word: '%s', ext_file: '%s'", current_word, ext_file))
+		return
+	end
 
-		-- вызываем поиск rg через системные функции
-		vim.fn.setqflist({}, ' ', { title = 'Rg '..ext_file..' '..current_word, lines = vim.fn.systemlist('rg --vimgrep --type '..ext_file..' '..current_word) })
-		vim.cmd("copen")
+	-- вызываем поиск rg через системные функции
+	vim.fn.setqflist({}, ' ', { title = 'Rg '..ext_file..' '..current_word, lines = vim.fn.systemlist('rg --vimgrep --type '..ext_file..' '..current_word) })
+	vim.cmd("copen")
 
-		-- вызываем пользовательскую функцию :Rg
-		-- vim.cmd(string.format("Rg %s %s", ext_file, current_word))
+	-- вызываем пользовательскую функцию :Rg
+	-- vim.cmd(string.format("Rg %s %s", ext_file, current_word))
 end
 
-vim.keymap.set({'n','v'}, '<leader><F7>', function() QuickfixCurrWord() end)
+vim.keymap.set({'n','v'}, '<leader><F7>', QuickfixCurrWord, {desc = 'Quickfix current word'})
+
+
+-- SmartNetrw открытие и закрытие files explorer
+local function SmartNetrw()
+  local netrw_bufs = {}
+
+	-- Собираем все активные буферы netrw
+	for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+		if vim.api.nvim_buf_is_loaded(bufnr) then
+			local ft = vim.api.nvim_get_option_value('filetype', { buf = bufnr })
+			if ft == 'netrw' then
+				table.insert(netrw_bufs, bufnr)
+			end
+		end
+	end
+
+  -- Если буферов netrw нет — открываем новый
+  if #netrw_bufs == 0 then
+    vim.cmd("25vs +Explore")
+    return
+  end
+
+  -- Если буферы netrw есть — закрываем их все
+  for _, bufnr in ipairs(netrw_bufs) do
+    -- Проверяем, что буфер ещё существует
+    -- if vim.api.nvim_buf_is_valid(bufnr) then
+      -- Закрываем буфер без ошибки, даже если он изменён
+		vim.api.nvim_buf_delete(bufnr, { force = true })
+    -- end
+  end
+end
+
+vim.keymap.set('n', '<leader>e', SmartNetrw, { desc = 'Toggle netrw file explorer' })
