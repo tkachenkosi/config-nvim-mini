@@ -51,10 +51,14 @@ vim.opt.laststatus = 2
 vim.opt.showmode = false
 vim.opt.shortmess:append("sIc")
 
+
+-- подсветка для config-mini
+vim.opt.syntax = "ON"
+vim.opt_global.syntax = "ON"
 -- настройки для treesister
-vim.opt.syntax = "OFF"  -- ВСЕ ЗАГЛАВНЫЕ (иногда важно)
-vim.opt_global.syntax = "OFF"
-vim.cmd("syntax off")   -- Дублируем командой на всякий случай
+-- vim.opt.syntax = "OFF"  -- ВСЕ ЗАГЛАВНЫЕ (иногда важно)
+-- vim.opt_global.syntax = "OFF"
+-- vim.cmd("syntax off")   -- Дублируем командой на всякий случай
 
 
 -- тестирование функции alpha
