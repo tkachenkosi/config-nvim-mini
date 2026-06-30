@@ -51,7 +51,6 @@ vim.opt.laststatus = 2
 vim.opt.showmode = false
 vim.opt.shortmess:append("sIc")
 
-
 -- подсветка для config-mini
 vim.opt.syntax = "ON"
 vim.opt_global.syntax = "ON"
