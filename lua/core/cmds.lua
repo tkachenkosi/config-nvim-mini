@@ -1,20 +1,6 @@
 -- не коментиовать в новой строке (когда создаем новую строку)
 vim.cmd([[autocmd BufEnter * set fo-=c fo-=r fo-=o]])
 
--- кратковременно подсвечивает скопированную строку или блок
--- local YankHighlightGrp = vim.api.nvim_create_augroup('YankHighlightGrp', {})
-
--- vim.api.nvim_create_autocmd('TextYankPost', {
--- 	group  = vim.api.nvim_create_augroup('YankHighlightGrp', {}),
---   pattern = '*',
---   callback = function()
---     vim.highlight.on_yank({
---       higroup = 'IncSearch',
---       timeout = 30,
---     })
---   end,
--- })
-
 
 vim.api.nvim_create_autocmd('TextYankPost', {
 	pattern = "*",
@@ -78,16 +64,6 @@ vim.api.nvim_create_user_command("Rg", function(opts)
   vim.cmd("copen")
 end, { nargs = "+" })
 
--- Добавьте этот автокоманд
--- vim.api.nvim_create_autocmd("FileType", {
---     pattern = "go",
---     callback = function()
---         vim.opt_local.syntax = "OFF"
---         vim.cmd("syntax off")
---         vim.cmd("setlocal syntax=OFF")
---     end
--- })
-
 -- привязка keymap для окна quickfix
 vim.api.nvim_create_autocmd('FileType', {
   pattern = 'qf',
@@ -105,21 +81,6 @@ vim.api.nvim_create_autocmd('FileType', {
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "netrw",
 	callback = function()
-		-- local bs = { buffer = true, silent = true }
-		-- local brs = { buffer = true, remap = true, silent = true }
-		-- vim.keymap.set("n", "q", "<cmd>bd<CR>", bs) -- Close the current Netrw buffer
-		-- vim.keymap.set("n", "<Tab>", "mf", brs)		-- Mark the file/directory to the mark lis
-		-- vim.keymap.set("n", "<S-Tab>", "mF", brs) -- Unmark all the files/directories
-
-		-- vim.keymap.set("n", "q", function()
-		-- 	local bufnr = vim.api.nvim_get_current_buf()
-		-- 	vim.api.nvim_win_close(0, false)
-		-- 	vim.defer_fn(function()
-		-- 		if vim.api.nvim_buf_is_valid(bufnr) then
-		-- 			vim.api.nvim_buf_delete(bufnr, { force = true })
-		-- 		end
-		-- 	end, 50)
-		-- end, bs)
 
 		-- Improved file creation
 		vim.keymap.set("n", "%", function()
@@ -139,40 +100,4 @@ vim.api.nvim_create_autocmd("FileType", {
 -- Регистрируем парсер 'bash' для всех файлов с типом 'sh'
 vim.treesitter.language.register('bash', 'sh')
 vim.treesitter.language.register('bash', 'conf')
-
--- Автоматически запускаем подсветку для этих файлов при открытии
--- local bashGroup = vim.api.nvim_create_augroup('BashHighlight', { clear = true })
--- vim.api.nvim_create_autocmd('FileType', {
---   pattern = { 'sh', 'bash' },
---   group = bashGroup,
---   callback = function(args)
---     -- На всякий случай проверяем, не активна ли уже подсветка
---     if not vim.treesitter.highlighter.active[args.buf] then
---       pcall(vim.treesitter.start, args.buf)
---     end
---   end,
--- })
-
-
--- disable treesitter for large files
-local MAX_LINES = 5000
-
--- Start treesitter. 
-vim.api.nvim_create_autocmd('FileType', {
-  callback = function(ev)
-		-- checking the file size
-		if vim.api.nvim_buf_line_count(ev.buf) > MAX_LINES then
-			-- возврат подсветки на regex
-			vim.treesitter.stop(ev.buf)
-			vim.bo[ev.buf].syntax = "on"
-			return
-		end
-
-		-- не дергать start() повторно
-    if not vim.treesitter.highlighter.active[ev.buf] then
-			-- vim.bo[ev.buf].syntax = "off"
-      pcall(vim.treesitter.start, ev.buf)
-    end
-  end,
-})
 

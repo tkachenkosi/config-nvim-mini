@@ -118,5 +118,5 @@ local function toggle_diffview()
     end
 end
 
-vim.keymap.set("n", "<leader>d", toggle_diffview, { desc = "Toggle Diffview" })
-
+-- привычное выдиление строки
+vim.keymap.set('n', '<S-Down>', 'V', { noremap = true, silent = true })
